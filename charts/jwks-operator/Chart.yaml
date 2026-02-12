@@ -1,0 +1,17 @@
+apiVersion: v2
+name: jwks-operator
+description: A Helm chart for JWKS Operator - Kubernetes operator for managing JWKS configurations
+type: application
+version: 0.2.0
+appVersion: "latest"
+keywords:
+  - jwks
+  - operator
+  - kubernetes
+  - jwt
+home: https://github.com/jwks-operator/jwks-operator
+maintainers:
+  - name: jwks-operator
+sources:
+  - https://github.com/jwks-operator/jwks-operator
+

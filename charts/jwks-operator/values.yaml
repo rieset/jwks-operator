@@ -1,0 +1,94 @@
+# Default values for jwks-operator
+# This is a YAML-formatted file.
+
+replicaCount: 1
+
+image:
+  repository: "registry.example.com/jwks-operator/jwks"
+  pullPolicy: Always  # Always pull image when using 'latest' tag to ensure updates
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets:
+  - name: registry.credentials
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+rbac:
+  # Specifies whether RBAC resources should be created
+  create: true
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+
+resources:
+  limits:
+    cpu: 400m
+    memory: 128Mi
+  requests:
+    cpu: 200m
+    memory: 64Mi
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8081
+  initialDelaySeconds: 15
+  periodSeconds: 20
+
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: 8081
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Leader election
+leaderElection: true
+
+# Config file path
+configPath: "/config.yaml"
+
+# Enable CRD installation
+# If true, the CustomResourceDefinition will be installed as part of the Helm chart
+enableCRD: true
+
+# CRD configuration
+crd:
+  # Additional annotations for the CRD
+  annotations: {}
+  # Additional labels for the CRD
+  labels: {}
+
+# Nginx server resources configuration
+nginx:
+  resources:
+    requests:
+      cpu: "25m"
+      memory: "16Mi"
+    limits:
+      cpu: "50m"
+      memory: "32Mi"

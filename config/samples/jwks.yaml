@@ -1,0 +1,19 @@
+apiVersion: example.com/v1alpha1
+kind: JWKS
+metadata:
+  name: example-app-jwks-config
+  namespace: example-namespace
+spec:
+  certificateSecret: example-app-jwt-cert
+  configMapName: example-app-jwks-config
+  nginxConfigMapName: example-app-nginx-config
+  # Endpoint field is kept for backward compatibility
+  # JWKS is available at both "/" and "/jwks.json" paths
+  endpoint: "/jwks.json"
+  updateStrategy: rolling
+  keepOldKeys: true
+  oldKeysTTL: "720h"
+  # Интервалы реконсиляции и обновления (опционально, используются значения из config.yaml если не указаны)
+  # reconcileInterval: "5m"
+  # jwksUpdateInterval: "6h"
+

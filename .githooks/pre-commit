@@ -1,0 +1,52 @@
+#!/bin/bash
+# Pre-commit hook for JWKS Operator
+# Runs linting and formatting checks before commit
+
+set -e
+
+echo "🔍 Running pre-commit checks..."
+
+# Check if golangci-lint is available
+if ! command -v golangci-lint &> /dev/null; then
+    echo "⚠️  golangci-lint not found. Installing..."
+    make golangci-lint
+fi
+
+# Run go fmt to check formatting
+echo "📝 Checking code formatting (go fmt)..."
+unformatted=$(gofmt -l .)
+if [ -n "$unformatted" ]; then
+    echo "❌ Error: The following files are not formatted:"
+    echo "$unformatted"
+    echo "💡 Run 'make fmt' to fix"
+    exit 1
+fi
+echo "✅ Code formatting check passed"
+
+# Run goimports to check imports (if available)
+if command -v goimports &> /dev/null; then
+    echo "📦 Checking imports (goimports)..."
+    unformatted=$(goimports -l .)
+    if [ -n "$unformatted" ]; then
+        echo "⚠️  Warning: The following files have import formatting issues:"
+        echo "$unformatted"
+        echo "💡 Run 'goimports -w .' to fix"
+        # Don't fail, just warn
+    else
+        echo "✅ Import formatting check passed"
+    fi
+else
+    echo "⚠️  goimports not found, skipping import check"
+fi
+
+# Run golangci-lint
+echo "🔎 Running golangci-lint..."
+if ! make lint; then
+    echo "❌ Error: Linting failed. Fix the issues above before committing."
+    exit 1
+fi
+echo "✅ Linting passed"
+
+echo "🎉 All pre-commit checks passed!"
+exit 0
+

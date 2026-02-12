@@ -1,0 +1,135 @@
+# Конфигурация JWKS Operator
+# Этот файл интегрируется в сборку через build tags
+# Значения могут быть переопределены через переменные окружения
+# 
+# ВАЖНО: Namespace оператора определяется автоматически из окружения Kubernetes
+# Интервалы реконсиляции и обновления JWKS могут быть настроены в CRD (JWKS)
+
+# Интервал реконсиляции (по умолчанию, может быть переопределен в CRD)
+# Формат: Go duration (например, "5m", "1h")
+reconcileInterval: "5m"
+
+# Интервал обновления JWKS (по умолчанию, может быть переопределен в CRD)
+# Как часто проверять необходимость обновления JWKS
+jwksUpdateInterval: "6h"
+
+# Интервал проверки валидности JWKS через nginx (по умолчанию, может быть переопределен в CRD)
+# Как часто проверять, что JWKS, отдаваемый nginx, может верифицировать JWT токены
+jwksVerificationInterval: "5m"
+
+# Максимальное количество старых ключей в JWKS
+# Используется для graceful rotation
+maxOldKeys: 3
+
+# TTL для старых ключей по умолчанию
+# Время хранения старых ключей после ротации
+defaultOldKeysTTL: "720h"  # 30 дней
+
+# Стратегия обновления по умолчанию
+# Возможные значения: "rolling", "immediate"
+defaultUpdateStrategy: "rolling"
+
+# Сохранять старые ключи по умолчанию
+# true - graceful rotation с поддержкой старых токенов
+# false - немедленная замена ключей
+defaultKeepOldKeys: true
+
+# Очистка ConfigMap при удалении JWKS
+# true - удалять ConfigMap при удалении JWKS
+# false - оставлять ConfigMap
+cleanupOnDelete: false
+
+# Настройки логирования
+logging:
+  # Уровень логирования: debug, info, warn, error
+  level: "info"
+  
+  # Формат логов: json, text
+  format: "json"
+  
+  # Включить детальное логирование реконсиляции
+  verboseReconcile: false
+
+# Настройки метрик
+metrics:
+  # Порт для метрик Prometheus
+  port: 8080
+  
+  # Путь для метрик
+  path: "/metrics"
+  
+  # Включить детальные метрики
+  detailed: true
+
+# Настройки health checks
+health:
+  # Порт для health check
+  port: 8081
+  
+  # Путь для liveness probe
+  livenessPath: "/healthz"
+  
+  # Путь для readiness probe
+  readinessPath: "/readyz"
+
+# Настройки retry
+retry:
+  # Максимальное количество попыток
+  maxAttempts: 5
+  
+  # Начальная задержка между попытками
+  initialDelay: "5s"
+  
+  # Максимальная задержка между попытками
+  maxDelay: "5m"
+  
+  # Множитель для экспоненциальной задержки
+  backoffMultiplier: 2.0
+
+# Настройки кэширования
+cache:
+  # Включить кэширование JWKS
+  enableJWKSCache: true
+  
+  # TTL для кэша JWKS
+  jwksCacheTTL: "1h"
+  
+  # Включить кэширование сертификатов
+  enableCertCache: true
+  
+  # TTL для кэша сертификатов
+  certCacheTTL: "30m"
+
+# Настройки валидации
+validation:
+  # Валидировать сертификаты перед использованием
+  validateCertificates: true
+  
+  # Валидировать JWKS перед обновлением ConfigMap
+  validateJWKS: true
+  
+  # Проверять формат JSON перед сохранением
+  validateJSON: true
+
+# Настройки безопасности
+security:
+  # Минимальные права RBAC
+  # Оператор требует только необходимые права
+  minimalRBAC: true
+  
+  # Проверять OwnerReferences при обновлении ConfigMap
+  checkOwnerReferences: true
+  
+  # Использовать ServiceAccount для операций
+  useServiceAccount: true
+
+# Настройки ресурсов для nginx серверов
+nginx:
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "128Mi"
+

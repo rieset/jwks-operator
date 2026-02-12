@@ -1,0 +1,36 @@
+run:
+  timeout: 5m
+
+linters:
+  enable:
+    - errcheck
+    - goconst
+    - gocritic
+    - gofmt
+    - goimports
+    - revive
+    - gosec
+    - govet
+    - ineffassign
+    - misspell
+    - staticcheck
+    - typecheck
+    - unused
+  settings:
+    goconst:
+      min-len: 3
+      min-occurrences: 2
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - experimental
+        - opinionated
+        - performance
+        - style
+    errcheck:
+      check-type-assertions: true
+      check-blank: true
+    gosec:
+      severity: medium
+    misspell:
+      locale: US
